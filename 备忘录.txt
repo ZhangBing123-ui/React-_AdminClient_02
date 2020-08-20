@@ -12,3 +12,14 @@ Git相关操作
 git init
 初始化工作区
 
+git add .
+将工作区代码添加到缓存区
+
+git ccmmit -m '备注'
+将缓存区代码添加到版本区
+
+git push origin master
+将本地master分支推送到远程master分支
+
+git checkout -b 新分支 
+创建并切换到新分支 
