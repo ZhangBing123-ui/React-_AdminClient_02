@@ -21,5 +21,19 @@ git ccmmit -m '备注'
 git push origin master
 将本地master分支推送到远程master分支
 
+git pull origin master
+拉取远程分支到本地分支
+
 git checkout -b 新分支 
 创建并切换到新分支 
+
+*git checkout -b dev origin/dev
+根据远程分支创建本地分支
+
+*一般到公司第一件事: git clone 远程仓库网址
+克隆远程仓库到本地
+
+git branch
+查看有几个分支
+
+
