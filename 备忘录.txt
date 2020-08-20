@@ -1,0 +1,14 @@
+npm run build
+进行生产环境打包
+
+npm i serve      serve build
+下载serve 运行生产环境
+
+
+
+
+Git相关操作 
+
+git init
+初始化工作区
+
