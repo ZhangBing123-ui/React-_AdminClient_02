@@ -27,13 +27,24 @@ git pull origin master
 git checkout -b 新分支 
 创建并切换到新分支 
 
-*git checkout -b dev origin/dev
-根据远程分支创建本地分支
+
 
 *一般到公司第一件事: git clone 远程仓库网址
 克隆远程仓库到本地
+
+*git checkout -b dev origin/dev
+拥有远程的一个分支 但是本地没有 所以要根据远程分支创建本地分支
+
+git pull
+但是如果远程分支时后传的 本地没拉取过 需要先pull一下
 
 git branch
 查看有几个分支
 
 
+*引入antd并完成按需打包
+npm antd
+引入antd UI库
+
+npm run eject
+获取所有的配置
