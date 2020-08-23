@@ -1,50 +1,411 @@
-npm run build
-进行生产环境打包
+一.
+    npm run build
+    进行生产环境打包
 
-npm i serve      serve build
-下载serve 运行生产环境
-
-
-
-
-Git相关操作 
-
-git init
-初始化工作区
-
-git add .
-将工作区代码添加到缓存区
-
-git ccmmit -m '备注'
-将缓存区代码添加到版本区
-
-git push origin master
-将本地master分支推送到远程master分支
-
-git pull origin master
-拉取远程分支到本地分支
-
-git checkout -b 新分支 
-创建并切换到新分支 
+    npm i serve      serve build
+    下载serve 运行生产环境
 
 
 
-*一般到公司第一件事: git clone 远程仓库网址
-克隆远程仓库到本地
+二.
+    Git相关操作 
 
-*git checkout -b dev origin/dev
-拥有远程的一个分支 但是本地没有 所以要根据远程分支创建本地分支
+        git init
+        初始化工作区
 
-git pull
-但是如果远程分支时后传的 本地没拉取过 需要先pull一下
+        git add .
+        将工作区代码添加到缓存区
 
-git branch
-查看有几个分支
+        git ccmmit -m '备注'
+        将缓存区代码添加到版本区
+
+        git push origin master
+        将本地master分支推送到远程master分支
+
+        git pull origin master
+        拉取远程分支到本地分支
+
+        git checkout -b 新分支 
+        创建并切换到新分支 
+
+        *一般到公司第一件事: git clone 远程仓库网址
+        克隆远程仓库到本地
+
+        *git checkout -b dev origin/dev
+        拥有远程的一个分支 但是本地没有 所以要根据远程分支创建本地分支
+
+        git pull
+        但是如果远程分支时后传的 本地没拉取过 需要先pull一下
+
+        git branch
+        查看有几个分支
 
 
-*引入antd并完成按需打包
-npm antd
-引入antd UI库
+三.
+    安装antd并完成按需打包
 
-npm run eject
-获取所有的配置
+        1. npm antd
+        安装antd UI库
+
+        2. npm i babel-plugin-import --save
+        安装插件
+
+        3. npm run eject
+        获取所有的配置
+
+        4. 将此内容配置到package.json的最后的babel里面
+        ,
+            "plugins": [
+            [
+                "import",
+                {
+                "libraryName": "antd",
+                "LibraryDirectory": "es",
+                "style": "css"
+                }
+            ]
+            ]
+
+四.
+    react路由
+        1.路由是什么？
+        路由就是一个影射关系 一个(k => path)对应一个(v => component)
+
+        2.npm i  react-router-dom
+        安装react路由
+
+        3.const selectKey=this.props.location.pathname
+        获取当前路径得值 d但是只有路由组件有location属性
+        想要吧函数组件变成路由组件需要先引入 withRouter
+        然后在暴露组件的时候 export default withRouter(App)
+
+        4.this.props.history.replace('./')
+        路由跳转 这种方法一般在函数里调用 点击调用
+
+        5. <Redirect to='/'></Redirect>
+        这种方法在render里使用
+
+
+    
+
+
+
+
+五.
+    Form相关知识点
+
+        1.在Form标签里设置ref={(ref)=>this.form=ref}
+        这样可以在函数里用(form.方法名)
+
+        2.声明式表单验证:使用插件已定义好的规则而进行验证
+        用form自制的验证规则在rules里设置 
+        以{min:4,message:'用户名不能小于4位'}的形式 
+        俗称声明式验证。
+
+        3.自定义验证 在rules里设置属性validator:this.函数名
+        在函数里自定义设置表单验证规则 这个函数属于回调函数 接受两个属性(rule,value)
+        然后以
+                if(!value){
+                    return Promise.reject('密码必须输入')
+                        }
+            的形式进行验证。
+
+        4.表单统一验证用form.validateFields()
+        在什么都不输入的情况下就点击提交 需要进行统一验证
+
+        5.给每个Item里设置个初始值 initialValue:'' 
+        这样在进行表单验证的时候 即使不输入值也不会被解析成undefined
+
+        
+
+
+
+
+
+
+
+
+
+
+六.
+    代理相关问题
+
+        发送axios请求会出现跨域的问题 要配置代理
+        前台服务器发送3001的请求 告诉代理一些信息：转发的目标地址 通过代理服务器转发5000的请求 返回结果再返回给自己
+        代理服务器只能在开发的时候使用 生产环境下也要配代理 但不是这个
+        在package.json最后面加上"proxy":"http://localhost:5000"
+        然后重新启动程序
+
+七.
+    拦截器
+        用于统一操作请求前和相应后的操作 只需要做一次就可以 
+        避免反复操作 编写ajax代码
+       
+
+    1.ajax请求函数模块: api/ajax.js
+        封装axios: interceptor + promise
+        a. 解决post请求参数后台不能读取问题: axios默认以json形参传递请求体参数, 在请求拦截器中转换成urlencode形式
+        b. 请求成功的结果不再是response, 而是reponse.data: 使用响应拦截器成功的回调返回response.data
+        c. 内部统一处理请求异常: 在响应拦截失败的回调中返回pending状态的promise, 中断promise链
+
+    2.请求拦截器
+        axios.interceptors.request.use(function(config){
+        const {method,data}=config
+        if(method.toLocaleLowerCase()==='post'&&typeof data==='object'){
+        config.data= qs.stringify(data)
+        }
+
+        return config
+        })  
+        
+    3.相应拦截器
+        axios.interceptors.response.use(function(response){
+            return response.data
+        },function(error){
+            alert("请求出错"+error.message)
+            return new Promise(()=>{})
+        })
+    
+八.
+     async和await的理解和使用
+        a. 作用?
+           简化promise对象的使用: 不用再使用then()来指定成功/失败的回调函数
+           以同步编码(没有回调函数了)方式实现异步流程
+        b. 哪里写await?
+            在返回promise的表达式左侧写await: 不想要promise, 想要promise异步执行的成功的value数据
+        c. 哪里写async?
+            await所在函数(最近的)定义的左侧写async
+
+九.
+    高阶函数与高阶组件
+        1. 高阶函数
+            定义: 接收的参数是函数或者返回值是函数
+            常见的: 数组遍历相关的方法 / 定时器 / Promise / 高阶组件 / fn.bind(obj)()
+            作用: 实现一个更加强大, 动态的功能
+
+        2. 高阶组件: 
+            本质是一个函数
+            函数接收一个组件, 返回一个新的组件
+            Form.create()返回的就是一个高阶组件   
+        
+        3. 高阶组件与高阶函数的关系
+            高阶组件是特别的高阶函数
+            接收一个组件函数, 返回是一个新的组件函数
+    函数对象与实例对象
+        1.函数对象：将一个函数作为对象使用
+        2.实例对象：new函数调用产生的函数，简称对象
+
+知识碎片
+1.组件是个类，标签是个实例
+  组件:组件类，本质就一个构造函数股，定义组件:class组件、function组件
+  组件对象:组件类的实例，也就是构造函数的实例，<App></App>
+
+2.形参是变量，实参是数据
+  赋值是将实参数据赋值给形参变量
+
+3. localStorage.setItem('user_key',JSON.stringify(user))
+
+4.transform: translateX(-50%);
+  css操作:移动自身宽度的50%
+
+5.Date.now()
+  当前时间的数值
+
+6.一般在生命周期函数componentDidMount开启定时器之后 
+  会在生命周期函数componentWillUnmount里做清除定时器的收尾工作
+  防止内存泄露。
+    componentDidMount(){
+        this.intervalId=setInterval(()=>{
+            
+            },1000)
+        }
+        componentWillUnmount(){
+            clearInterval(this.intervalId)
+        }
+
+7.异步请求天气信息的时候要用jsonp发送请求 不能用axios
+  jsonp有三个参数 (URL:请求地址,{}:配置对象,(error,data:返回的参数)=>{}:回调函数)  
+  在定义api接口的时候 要主动用new Promise的形式返回
+    export const reqWeather=(city)=>{
+        return new Promise((resolve,reject)=>{
+            const url=`http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
+        jsonp(url,{},(error,data)=>{
+            if(!error&&data.error===0){
+                const{dayPictureUrl,weather}=data.results[0].weather_data[0]
+                resolve({dayPictureUrl,weather})
+            }else{
+                message.error("获取天气信息失败")
+            }
+        })
+        })
+    
+    }
+
+    getWeather=  async()=>{
+            const {dayPictureUrl,weather}=await reqWeather("北京")
+            this.setState({dayPictureUrl,weather})
+
+8.call() apply() bind()
+  这三个方法都是Functiond身上的方法
+
+9.componentDidUpdate() {
+            this.form.setFieldsValue({
+                categoryName: this.props.categoryName,
+            });
+        }
+
+             initialValue={categoryName||''}
+
+10.十五个常用数组的方法
+   1、some()
+    此方法为参数传递的函数测试数组。如果有一个元素与测试元素匹配，
+    则返回true，否则返回false。
+ 译者注： some() 不会对空数组进行检测；some() 不会改变原始数组。
+
+    const myAwesomeArray = ["a", "b", "c", "d", "e"]
+    myAwesomeArray.some(test => test === "d")
+    //-------> Output : true
+
+   2、reduce（）
+    此方法接收一个函数作为累加器。它为数组中的每个元素依次执行回调函数，
+    不包括数组中被删除或者从未被赋值的元素。
+    函数应用于累加器，数组中的每个值最后只返回一个值。
+ 译者注：reduce() 方法接受四个参数：初始值（上一次回调的返回值），当前元素值，当前索引，原数组。
+
+    const myAwesomeArray = [1, 2, 3, 4, 5]
+    myAwesomeArray.reduce((total, value) => total * value)
+    // 1 * 2 * 3 * 4 * 5
+    //-------> Output = 120
+
+   3、Every（）
+    此方法是对数组中每项运行给定函数，如果数组的每个元素都与测试匹配，
+    则返回true，反之则返回false。
+
+    const myAwesomeArray = ["a", "b", "c", "d", "e"]
+    myAwesomeArray.every(test => test === "d")
+    // -------> Output : falseconst myAwesomeArray2 = ["a", "a", "a", "a", "a"]
+    myAwesomeArray2.every(test => test === "a")
+    //-------> Output : true
+
+    4、map（）
+    该方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。
+    它按照原始数组元素顺序依次处理元素。
+ 译者注：map() 不会对空数组进行检测；map() 不会改变原始数组。
+
+    const myAwesomeArray = [5, 4, 3, 2, 1]myAwesomeArray.map(x => x * x)
+    //-------> Output : 25
+    //                  16
+    //                  9
+    //                  4
+    //                  1
+    
+    5、flat（）
+    此方法创建一个新数组，其中包含子数组上的holden元素，并将其平整到新数组中。
+    请注意，此方法只能进行一个级别的深度。
+
+    const myAwesomeArray = [[1, 2], [3, 4], 5]
+    myAwesomeArray.flat()
+    //-------> Output : [1, 2, 3, 4, 5]
+
+    6、filter（）
+    该方法接收一个函数作为参数。并返回一个新数组，该数组包含该数组的所有元素，
+    作为参数传递的过滤函数对其返回true。
+ 译者注：filter（）方法是对数据中的元素进行过滤，也就是说是不能修改原数组中的数据，
+    只能读取原数组中的数据，callback需要返回布尔值；为true的时候，对应的元素留下来；
+    为false的时候，对应的元素过滤掉。
+
+    const myAwesomeArray = [  { id: 1, name: "john" },  
+    { id: 2, name: "Ali" },  { id: 3, name: "Mass" },  
+    { id: 4, name: "Mass" },]
+    myAwesomeArray.filter(element => element.name === "Mass")
+    //-------> Output : 0:{id: 3, name: "Mass"},
+    //                  1:{id: 4, name: "Mass"}
+
+    7、forEach（）
+    此方法用于调用数组的每个元素。并将元素传递给回调函数。
+ 译者注: forEach() 对于空数组是不会执行回调函数的。
+
+    const myAwesomeArray = [  { id: 1, name: "john" },  
+    { id: 2, name: "Ali" },  { id: 3, name: "Mass" },]
+    myAwesomeArray.forEach(element => console.log(element.name))
+    //-------> Output : john
+    //                  Ali
+    //                  Mass
+
+    8、 findIndex（）
+    此方法返回传入一个测试条件（函数）符合条件的数组第一个元素位置。
+    它为数组中的每个元素都调用一次函数执行，当数组中的元素在测试条件时返回 true 时,
+     findIndex() 返回符合条件的元素的索引位置，之后的值不会再调用执行函数。
+     如果没有符合条件的元素返回 -1
+ 译者注：findIndex() 对于空数组，函数是不会执行的， findIndex() 并没有改变数组的原始值。
+
+    const myAwesomeArray = [  { id: 1, name: "john" },  
+    { id: 2, name: "Ali" },  { id: 3, name: "Mass" },]
+    myAwesomeArray.findIndex(element => element.id === 3)
+    // -------> Output : 2myAwesomeArray.findIndex(element => element.id === 7)//-------> Output : -1
+
+    9、 find（）
+    此方法返回通过测试（函数内判断）的数组的第一个元素的值。
+    find() 方法为数组中的每个元素都调用一次函数执行：当数组中的元素在测试条件时回 true 时, find() 返回符合条件的元素，
+    之后的值不会再调用执行函数。如果没有符合条件的元素返回 undefined。
+ 译者注: find() 对于空数组，函数是不会执行的；find() 并没有改变数组的原始值。
+
+    const myAwesomeArray = [  { id: 1, name: "john" }, 
+    { id: 2, name: "Ali" },  { id: 3, name: "Mass" },]
+    myAwesomeArray.find(element => element.id === 3)
+    // -------> Output : {id: 3, name: "Mass"}
+    myAwesomeArray.find(element => element.id === 7)
+    //-------> Output : undefined
+
+    10、 sort（）
+    此方法接收一个函数作为参数。它对数组的元素进行排序并返回它。也可以使用含有参数的sort()方法进行排序。
+
+    const myAwesomeArray = [5, 4, 3, 2, 1]
+    // Sort from smallest to largestmyAwesomeArray.sort((a, b) => a - b)
+    //  -------> Output : [1, 2, 3, 4, 5]
+    // Sort from largest to smallestmyAwesomeArray.sort((a, b) => b - a)
+    //-------> Output : [5, 4, 3, 2, 1]
+
+    11、 concat（）
+    此方法用于连接两个或多个数组/值，它不会改变现有的数组。而仅仅返回被连接数组的一个新数组。
+
+    const myAwesomeArray = [1, 2, 3, 4, 5]const 
+    myAwesomeArray2 = [10, 20, 30, 40, 50]
+    myAwesomeArray.concat(myAwesomeArray2)
+    //-------> Output : [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]
+
+    12、 fill（）
+    此方法的作用是使用一个固定值来替换数组中的元素。该固定值可以是字母、数字、字符串、数组等等。
+    它还有两个可选参数，表示填充起来的开始位置（默认为0）与结束位置（默认为array.length）。
+ 译者注：fill() 方法用于将一个固定值替换数组的元素。
+
+    const myAwesomeArray = [1, 2, 3, 4, 5]
+    // The first argument (0) is the value
+    // The second argument (1) is the starting index
+    // The third argument (3) is the ending indexmyAwesomeArray.fill(0, 1, 3)
+    //-------> Output : [1, 0, 0, 4, 5]
+
+    13、 includes（）
+    此方法用于判断字符串是否包含指定的子字符串。如果找到匹配的字符串则返回 true，否则返回 false。
+ 译者注：includes() 方法区分大小写。
+
+    const myAwesomeArray = [1, 2, 3, 4, 5]
+    myAwesomeArray.includes(3)
+    // -------> Output : truemyAwesomeArray.includes(8)
+    // -------> Output : false
+
+    14、 reverse（）
+    此方法用于颠倒数组中元素的顺序。第一个元素成为最后一个，最后一个元素将成为第一个。
+
+    const myAwesomeArray = ["e", "d", "c", "b", "a"]
+    myAwesomeArray.reverse()
+    // -------> Output : ['a', 'b', 'c', 'd', 'e']
+
+    15、 flatMap（）
+    该方法将函数应用于数组的每个元素，然后将结果压缩为一个新数组。它在一个函数中结合了flat（）和map（）。
+
+    const myAwesomeArray = [[1], [2], [3], [4], [5]]
+    myAwesomeArray.flatMap(arr => arr * 10)
+    //-------> Output : [10, 20, 30, 40, 50]
+    // With .flat() and .map()myAwesomeArray.flat().map(arr => arr * 10)
+    //-------> Output : [10, 20, 30, 40, 50]
