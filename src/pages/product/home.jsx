@@ -64,7 +64,7 @@ export default class ProductHome extends Component {
                         <LinkButton 
                         onClick={()=>{
                             memoryUtils.product=product
-                            this.props.history.push('/product/detail/:id')}}>详情</LinkButton>
+                            this.props.history.push('/product/detail/'+product._id)}}>详情</LinkButton>
                         <LinkButton style={{border:"1px red solid",color:'red'}}
                         onClick={()=>{
                             memoryUtils.product=product

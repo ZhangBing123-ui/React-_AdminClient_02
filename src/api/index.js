@@ -77,3 +77,8 @@ export const reqUpdateCategory=({categoryName,categoryId})=>ajax.post(BASE+'mana
     })
     // 添加/更新用户
     export const reqAddOrUpdateUser = (user) => ajax.post(BASE + '/manage/user/' + (user._id ? 'update' : 'add'), user)
+    export const reqProduct = (productId) => ajax(BASE + '/manage/product/info', {
+        params: { 
+          productId
+        }
+      })

@@ -4,18 +4,19 @@ import { Menu } from 'antd';
 import {
    HomeFilled,MailOutlined
   } from '@ant-design/icons';
-  
+import {connect} from 'react-redux'  
+import {setHeaderTitle} from '../../redux/actions'
 import menuList from '../../config/menuConfig'
 import logo from './logo.png'
 import  './index.css'
-import memoryUtils from '../../utils/memoryUtils';
+
 const { SubMenu } = Menu;
 const Item=Menu.Item
 
  class LeftNav extends Component {
    
     hasAuth=(item)=>{
-        const user=memoryUtils.user
+        const user=this.props.user
         const menus=user.role.menus
             if(user.username==='admin'||item.pubilc||menus.indexOf(item.key)!==-1){
                 return true
@@ -33,11 +34,14 @@ const Item=Menu.Item
         return menuList.reduce((pre,item)=>{
             if(this.hasAuth(item)){
                  if(!item.children){
+                     if(item.key===path||path.indexOf(item.key)===0){
+                         this.props.setHeaderTitle(item.title)
+                     }
                 pre.push(
                     <Item key={item.key}
                      icon={<HomeFilled/>}
                     >
-                       <Link to={item.key}>
+                       <Link to={item.key} onClick={()=>this.props.setHeaderTitle(item.title)}>
               <span>{item.title}</span>
                        </Link>
                     </Item>
@@ -128,4 +132,10 @@ const Item=Menu.Item
         )
     }
 }
-export default withRouter(LeftNav)
+export default connect(
+    state=>({
+        user:state.user
+    }),{
+    setHeaderTitle
+    }
+)( withRouter(LeftNav))

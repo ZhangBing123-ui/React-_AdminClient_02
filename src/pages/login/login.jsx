@@ -2,29 +2,20 @@ import React, { Component } from 'react'
 import { Form, Input, Button ,Checkbox, message} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import {Redirect} from 'react-router-dom'
-
+import {connect} from 'react-redux'
+import {login} from '../../redux/actions'
 import memoryUtils from '../../utils/memoryUtils'
 import storageUtils from '../../utils/storageUtils'
 import {reqLogin} from '../../api'
 import './login.css'
 import logo from './logo.png'
 const Item=Form.Item
-export default class login extends Component {
+ class Login extends Component {
 
      onFinish = async({username,password}) => {
-        const result= await reqLogin(username,password)
-        if(result.status===0){
-          const user=result.data
-          //localStorage.setItem('user_key',JSON.stringify(user))
-          storageUtils.saveUser(user)
+        this.props.login(username,password)
+        }
         
-          memoryUtils.user=user
-            this.props.history.replace('./')
-            message.success('登陆成功!')
-        }else{
-          message.error(result.msg)
-        }
-        }
 
         validatePwd=(rele,value)=>{
           value=value.trim()
@@ -43,12 +34,13 @@ export default class login extends Component {
     render() {
 
       //const user=JSON.parse( localStorage.getItem("uesr_key",)||'{}')
-      const user=memoryUtils.user
+      const user=this.props.user
        if(user._id){
           // this.props.history.replace('/login')
-          return <Redirect to='/'></Redirect>
+          return <Redirect to='/home'></Redirect>
        }
 
+       const errorMsg=user.errorMsg
         return (
             <div className='login'>
                <div className='login-header'>
@@ -56,6 +48,7 @@ export default class login extends Component {
                 <h1>React项目:后台管理系统</h1>
                </div>
                <div className="login-content">
+                 {errorMsg?<div style={{color:'red'}}>{errorMsg}</div>:null}
                 <h1>用户登录</h1>
            <Form
                 ref={(ref)=>this.form=ref}
@@ -108,3 +101,10 @@ export default class login extends Component {
         )
     }
 }
+export default connect(
+  state=>({
+    user:state.user
+  }),{
+    login
+  }
+)(Login)

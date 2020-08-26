@@ -1,14 +1,18 @@
 import React, { Component } from 'react'
 import {withRouter} from 'react-router-dom'
-import memoryUtils from '../../utils/memoryUtils'
+import {logout} from '../../redux/actions'
 import storageUtils from '../../utils/storageUtils'
 import {Modal,Button} from 'antd'
 import LinkButton from '../link-button'
 import {reqWeather} from '../../api'
 import {formateDate} from '../../utils/dateUtils'
 import menuList from '../../config/menuConfig'
+import {connect} from 'react-redux'
 import './index.css'
+
  class Header extends Component {
+
+    
      state={
          currentTime:formateDate(Date.now()) ,
          dayPictureUrl:'',
@@ -19,9 +23,7 @@ import './index.css'
         Modal.confirm({
             title:'确认退出吗?',
             onOk:()=>{
-                storageUtils.removeUser()
-                memoryUtils.user={}
-                this.props.history.replace('/login')
+              this.props.logout()
             },
             onCancel:()=>{
 
@@ -60,8 +62,9 @@ import './index.css'
     }
     render() {
         const {currentTime,dayPictureUrl,weather}=this.state
-        const user=memoryUtils.user
-        const title=this.getTitle()
+        const user=this.props.user
+        //const title=this.getTitle()
+        const title=this.props.headerTitle
         return (
             <div className='header'>
                 <div className="header-top">
@@ -80,4 +83,9 @@ import './index.css'
         )
     }
 }
-export default withRouter(Header)
+export default connect(
+    state=>({
+        headerTitle:state.headerTitle,
+        user:state.user
+    }),{logout}
+)(withRouter(Header))

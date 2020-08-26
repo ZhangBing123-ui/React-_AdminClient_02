@@ -5,13 +5,14 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import memoryUtils from "../../utils/memoryUtils";
 import { Redirect } from 'react-router-dom';
 import {BASE_IMG} from '../../utils/Constants'
-import { reqCategory } from "../../api";
+import { reqCategory,reqProduct } from "../../api";
 
 const Item=List.Item
 export default class ProductDetail extends Component {
    
     state={
-        categoryName:''
+        categoryName:'',
+        product:memoryUtils.product
     }
 
     getCategory= async(categoryId)=>{
@@ -21,19 +22,26 @@ export default class ProductDetail extends Component {
             this.setState({categoryName})
         }
     }
-    componentDidMount(){
-        const product =memoryUtils.product
-        if(product._id){
-            this.getCategory(product.categoryId)
+    async componentDidMount () {
+        let product = this.state.product
+        if (product._id) { // 如果商品有数据, 获取对应的分类
+          this.getCategory(product.categoryId)
+        } else { // 如果当前product状态没有数据, 根据id参数中请求获取商品并更新
+          const id = this.props.match.params.id
+          const result = await reqProduct(id)
+          if (result.status === 0) {
+            product = result.data
+            this.setState({
+              product
+            })
+            this.getCategory(product.categoryId) // 获取对应的分类
+          }
         }
-        
-    }
+      }
     render() {
         const {categoryName}=this.state
-        const product =memoryUtils.product
-        if(!product||!product._id){
-            return <Redirect to='/product'></Redirect>
-        }
+        const product=this.state.product
+     
         const title=(
             <span>
                 <LinkButton onClick={()=>this.props.history.goBack()}>
@@ -64,7 +72,7 @@ export default class ProductDetail extends Component {
                     </Item>
                     <Item>
                         <span className='detail-left'>商品图片:</span> { 
-                               product.imgs.map(img=> <img key={img} className='detail-img' src={BASE_IMG+img} alt="img"/>)}
+                             product.imgs&&product.imgs.map(img=> <img key={img} className='detail-img' src={BASE_IMG+img} alt="img"/>)}
                         
                         
                            
