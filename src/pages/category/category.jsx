@@ -25,10 +25,10 @@ class Category extends Component {
     },
     {
       title: '操作',
-      width:300,
-        render:(category)=><LinkButton onClick={()=>{
+      width:200,
+        render:(category)=><Button type='primary' onClick={()=>{
             this.category=category
-            this.setState({showStatus:2})}}>修改分类</LinkButton>
+            this.setState({showStatus:2})}}>修改分类</Button>
     },
     
   ];
@@ -49,6 +49,7 @@ class Category extends Component {
     handleOk= ()=>{
         this.form.validateFields()
         .then(async values=>{
+            console.log(values);
             const {categoryName}=values
             const {showStatus}=this.state
             let result

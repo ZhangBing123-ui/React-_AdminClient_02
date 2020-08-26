@@ -22,7 +22,7 @@ export default class login extends Component {
             this.props.history.replace('./')
             message.success('登陆成功!')
         }else{
-          message.error(result.mag)
+          message.error(result.msg)
         }
         }
 

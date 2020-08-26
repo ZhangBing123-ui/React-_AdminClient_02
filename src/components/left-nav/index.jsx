@@ -8,17 +8,31 @@ import {
 import menuList from '../../config/menuConfig'
 import logo from './logo.png'
 import  './index.css'
+import memoryUtils from '../../utils/memoryUtils';
 const { SubMenu } = Menu;
 const Item=Menu.Item
 
  class LeftNav extends Component {
    
+    hasAuth=(item)=>{
+        const user=memoryUtils.user
+        const menus=user.role.menus
+            if(user.username==='admin'||item.pubilc||menus.indexOf(item.key)!==-1){
+                return true
+            }else if(item.children){
+                const cItem=item.children.find(cItem=>menus.indexOf(cItem.key)!==-1)
+                return !!cItem
+            }
+        
+        return false
+    }
         
       getMenuNodes2=(menuList)=>{
 
         const path=this.props.location.pathname
         return menuList.reduce((pre,item)=>{
-            if(!item.children){
+            if(this.hasAuth(item)){
+                 if(!item.children){
                 pre.push(
                     <Item key={item.key}
                      icon={<HomeFilled/>}
@@ -29,7 +43,7 @@ const Item=Menu.Item
                     </Item>
                 )
             }else{
-               const cItem=item.children.find(item=>item.key===path)
+               const cItem=item.children.find(item=>path.indexOf(item.key)===0)
                 if(cItem){
                    this.OptionKey=item.key
                 }
@@ -45,6 +59,8 @@ const Item=Menu.Item
                     </SubMenu> 
                 )
             }
+            }
+           
             return pre
         },[])
       }
@@ -83,7 +99,10 @@ const Item=Menu.Item
     }
     render() {
         
-        const selectKey=this.props.location.pathname
+        let selectKey=this.props.location.pathname
+        if(selectKey.indexOf('/product')===0){
+            selectKey='/product'
+        }
         return (
             <div className='left-nav'>
                 <Link className="left-nav-link" to='/home'>  

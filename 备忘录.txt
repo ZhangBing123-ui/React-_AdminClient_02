@@ -40,6 +40,10 @@
         git branch
         查看有几个分支
 
+        
+        git reset --hard head^回滚到上一个commit
+        git push origin master --force 命令强制提交到远程仓库
+
 
 三.
     安装antd并完成按需打包
@@ -81,6 +85,10 @@
 
         4.this.props.history.replace('./')
         路由跳转 这种方法一般在函数里调用 点击调用
+
+        5.this.props.history.goBack()
+        路由回退
+       
 
         5. <Redirect to='/'></Redirect>
         这种方法在render里使用
@@ -256,6 +264,37 @@
 
              initialValue={categoryName||''}
 
+10.exact 路由严格模式匹配
+   exact是Route下的一个属性，react路由会匹配到所有能匹配到的路由组件，
+   exact能够使得路由的匹配更严格一些。
+   exact的值为bool型，为true时表示严格匹配，为false时为正常匹配。
+
+   例子如下：
+<Route path='/' component={Home} />
+<Route path='/page' component={Page}>
+//这种情况下，如果匹配路由path='/page'，那么会把Home也会展示出来。
+//既路由path='/page'会匹配路由path='/'和路由path='/page'
+
+所以我们常常会添加exact来解决上述问题
+<Route exact path='/' component={Home} />
+<Route path='/page' component={Page} />
+//这样匹配路由path='/page'，只会匹配到Page组件
+
+11.dangerouslySetInnerHTML:将一个标签格式的字符串进行转换
+<div dangerouslySetInnerHTML={{__html:"<a href='http://www.atgugu.com'>尚硅谷</a>"}}></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 10.十五个常用数组的方法
    1、some()
     此方法为参数传递的函数测试数组。如果有一个元素与测试元素匹配，
@@ -409,3 +448,104 @@
     //-------> Output : [10, 20, 30, 40, 50]
     // With .flat() and .map()myAwesomeArray.flat().map(arr => arr * 10)
     //-------> Output : [10, 20, 30, 40, 50]
+
+11.七个删除数组元素的方法
+   1.length属性
+JavaScript中Array的length属性非常有特点一一它不是只读的。
+因此，可以通过设置这个属性来达到从数组的末尾移除项或添加新项的目的。
+var colors = ["red", "blue", "grey"]; // 创建一个包含3个字符串的数组
+colors.length = 2;
+
+console.log(colors[2]); // undefined
+
+   2.delete关键字
+JavaScript提供了一个delete关键字用来删除（清除）数组元素。
+var colors = ["red", "blue", "grey", "green"];
+delete colors[0];
+
+console.log(colors); // [undefined, "blue", "grey", "green"]
+要注意的是，使用delete删除元素之后数组长度不变，只是被删除元素被置为undefined了。
+
+   3.pop()栈方法
+JavaScript中的Array对象提供了一个pop()栈方法用于弹出并返回数组中的最后一项，
+某种程度上可以当做删除用。
+栈数据结构的访问规则是FILO（First In Last Out，先进后出），栈操作在栈顶添加项，
+从栈顶移除项，使用pop()方法，它能移除数组中的最后一项并返回该项，并且数组的长度减1。
+
+var colors = ["red", "blue", "grey"];
+var color = colors.pop();
+
+console.log(color); // "grey"
+console.log(colors.length); // 2
+可以看出，在调用pop()方法时，数组返回最后一项，即”grey”，数组的元素也仅剩两项。
+
+   4.shift()队列方法
+JavaScript中的Array对象提供了一个shift()队列方法用于弹出并返回数组中的第一项，
+某种程度上也可以当做删除用。
+队列数据结构的访问规则是FIFO（First In First Out，先进先出），
+队列在列表的末端添加项，从列表的前端移除项，使用shift()方法，
+它能够移除数组中的第一个项并返回该项，并且数组的长度减1。
+var colors = ["red", "blue", "grey"];
+var color = colors.shift();
+
+console.log(color); // "red"
+console.log(colors.length); // 2
+可以看出，在调用shift()方法时，数组返回第一项，即”red”，数组的元素也仅剩两项。
+
+   5.splice()操作方法 
+在JavaScript的Array对象中提供了一个splice()方法用于对数组进行特定的操作。
+splice()恐怕要算最强大的数组方法了，他的用法有很多种，在此只介绍删除数组元素的方法。
+在删除数组元素的时候，它可以删除任意数量的项，只需要指定2个参数：要删除的第一项的位置和要删除的项数。
+var colors = ["red", "blue", "grey"];
+var color = colors.splice(0, 1);
+
+console.log(color); // "red"
+console.log(colors); // ["blue", "grey"]
+可以看出，在调用了splice(0, 1)方法时，数组从第一项开始，删除了一项。
+
+   6.迭代方法
+所谓的迭代方法就是用循环迭代数组元素，发现符合要删除的项则删除。用的最多的地方，
+可能是当数组中的元素为对象的时候，可以根据对象的某个属性（例如ID）来删除数组元素。
+第一种用最常见的ForEach循环来对比元素找到之后将其删除。
+
+var colors = ["red", "blue", "grey"];
+
+colors.forEach(function(item, index, arr) {
+    if(item === "red") {
+        arr.splice(index, 1);
+    }
+});
+
+可以看到这里还要配合splice()方法去实现删除，循环只是为了找到特定的元素。
+另外一种思路是循环将不需要删除的元素推入到新的数组中，也能达到假性删除特定元素的目的。
+第二种我们用循环中的filter方法。
+
+var colors = ["red", "blue", "grey"];
+
+colors = colors.filter(function(item) {
+    return item != "red"
+});
+ 
+console.log(colors); // ["blue", "grey"]
+
+代码很简单，找出元素不是red的项数返回给colors（其实是得到了一个新的数组，并不是在原数组上进行删除操作），一定程度上也算是达到了删除特定元素的目的。
+prototype原型方法
+可以通过在Array的原型上添加方法来达到删除的目的。
+
+Array.prototype.remove = function(dx) {
+　　if(isNaN(dx) || dx > this.length){
+　　　　return false;
+　　}
+
+　　for(var i = 0, n = 0; i < this.length; i++) {
+　　　　if(this[i] != this[dx]) {
+　　　　　　this[n++] = this[i];
+　　　　}
+　　}
+　　this.length -= 1;
+};
+
+var colors = ["red", "blue", "grey"];
+colors.remove(1);
+
+console.log(colors); // ["red", "grey"]
