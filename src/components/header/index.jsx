@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {withRouter} from 'react-router-dom'
 import {logout} from '../../redux/actions'
-import storageUtils from '../../utils/storageUtils'
+
 import {Modal,Button} from 'antd'
 import LinkButton from '../link-button'
 import {reqWeather} from '../../api'

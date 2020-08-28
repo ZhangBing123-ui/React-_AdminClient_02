@@ -25,6 +25,7 @@
     "dotenv-expand": "5.1.0",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
+    "echarts-for-react": "^2.0.16",
     "eslint": "^6.6.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-loader": "3.0.3",
